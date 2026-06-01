@@ -78,6 +78,7 @@ function formatAuthError(message = "인증 처리에 실패했습니다.") {
 export default function Home() {
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
@@ -262,7 +263,7 @@ export default function Home() {
     try {
       if (!hasSupabaseEnv() || !supabase) {
         setUser({
-          email,
+          email: email || `${username || "local"}@local.test`,
           username: username || email.split("@")[0] || "local",
           fullName: fullName || username || email.split("@")[0] || "local",
           isAdmin: false,
@@ -292,7 +293,18 @@ export default function Home() {
         return;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const loginResponse = await fetch("/api/login-id", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
+      const loginPayload = await loginResponse.json().catch(() => null) as { email?: string; message?: string } | null;
+      if (!loginResponse.ok || !loginPayload?.email) {
+        setAuthMessage(formatAuthError(loginPayload?.message ?? "로그인에 실패했습니다."));
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email: loginPayload.email, password });
       if (error || !data.user?.email) {
         setAuthMessage(formatAuthError(error?.message ?? "로그인에 실패했습니다."));
         return;
@@ -305,7 +317,7 @@ export default function Home() {
 
   async function handlePasswordReset() {
     setAuthMessage("");
-    if (!email) {
+    if (!resetEmail) {
       setAuthMessage("비밀번호 재설정 메일을 받을 이메일을 입력하세요.");
       return;
     }
@@ -315,7 +327,7 @@ export default function Home() {
       return;
     }
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
       redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
     });
 
@@ -595,20 +607,34 @@ export default function Home() {
                           value={username}
                           onChange={(event) => setUsername(event.target.value)}
                           placeholder="username"
+                          required
                         />
                       </label>
                     </>
+                  ) : (
+                    <label className="block text-sm">
+                      <span className="mb-1 block text-[#526171]">ID</span>
+                      <input
+                        className="h-10 w-full rounded-md border border-[#cfd7e2] px-3 outline-none focus:border-[#245c7a]"
+                        value={username}
+                        onChange={(event) => setUsername(event.target.value)}
+                        placeholder="admin"
+                        required
+                      />
+                    </label>
+                  )}
+                  {authMode === "signup" ? (
+                    <label className="block text-sm">
+                      <span className="mb-1 block text-[#526171]">Email</span>
+                      <input
+                        className="h-10 w-full rounded-md border border-[#cfd7e2] px-3 outline-none focus:border-[#245c7a]"
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        required
+                      />
+                    </label>
                   ) : null}
-                  <label className="block text-sm">
-                    <span className="mb-1 block text-[#526171]">Email</span>
-                    <input
-                      className="h-10 w-full rounded-md border border-[#cfd7e2] px-3 outline-none focus:border-[#245c7a]"
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      required
-                    />
-                  </label>
                   <label className="block text-sm">
                     <span className="mb-1 block text-[#526171]">Password</span>
                     <div className="flex h-10 rounded-md border border-[#cfd7e2] focus-within:border-[#245c7a]">
@@ -636,13 +662,25 @@ export default function Home() {
                     {isAuthSubmitting ? "처리 중" : authMode === "login" ? "로그인" : "가입"}
                   </button>
                   {authMode === "login" ? (
-                    <button
-                      type="button"
-                      className="h-9 w-full rounded-md border border-[#cfd7e2] bg-white text-sm font-medium hover:bg-[#f2f4f7]"
-                      onClick={handlePasswordReset}
-                    >
-                      비밀번호 찾기
-                    </button>
+                    <div className="space-y-2 rounded-md border border-[#e2e8f0] bg-[#fbfcfd] p-3">
+                      <label className="block text-sm">
+                        <span className="mb-1 block text-[#526171]">비밀번호 찾기 Email</span>
+                        <input
+                          className="h-10 w-full rounded-md border border-[#cfd7e2] px-3 outline-none focus:border-[#245c7a]"
+                          type="email"
+                          value={resetEmail}
+                          onChange={(event) => setResetEmail(event.target.value)}
+                          placeholder="가입한 이메일"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="h-9 w-full rounded-md border border-[#cfd7e2] bg-white text-sm font-medium hover:bg-[#f2f4f7]"
+                        onClick={handlePasswordReset}
+                      >
+                        비밀번호 찾기
+                      </button>
+                    </div>
                   ) : null}
                   {authMessage ? <p className="text-sm text-[#8a5a00]">{authMessage}</p> : null}
                 </form>
