@@ -62,6 +62,8 @@ const modeLabels: Record<QuizMode, string> = {
   mixed: "혼합",
 };
 
+const pendingProfileKey = (emailValue: string) => `pending-profile:${emailValue.trim().toLowerCase()}`;
+
 export default function Home() {
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -128,15 +130,32 @@ export default function Home() {
   const applyAuthenticatedUser = useCallback(async (authUser: User) => {
     const fallbackName = authUser.user_metadata?.full_name ?? "";
     const fallbackUsername = authUser.user_metadata?.username ?? authUser.email?.split("@")[0] ?? "user";
+    const pendingProfile =
+      typeof window !== "undefined" && authUser.email
+        ? JSON.parse(window.localStorage.getItem(pendingProfileKey(authUser.email)) ?? "null") as
+            | { username?: string; fullName?: string }
+            | null
+        : null;
     let nextUser: UserState = {
       id: authUser.id,
       email: authUser.email ?? "",
-      username: fallbackUsername,
-      fullName: fallbackName,
+      username: pendingProfile?.username || fallbackUsername,
+      fullName: pendingProfile?.fullName || fallbackName,
       isAdmin: false,
     };
 
     if (supabase) {
+      if (authUser.email && (pendingProfile?.username || pendingProfile?.fullName)) {
+        await supabase.from("profiles").upsert({
+          id: authUser.id,
+          email: authUser.email,
+          username: pendingProfile.username || fallbackUsername,
+          full_name: pendingProfile.fullName || fallbackName,
+          updated_at: new Date().toISOString(),
+        });
+        window.localStorage.removeItem(pendingProfileKey(authUser.email));
+      }
+
       const { data } = await supabase
         .from("profiles")
         .select("username,full_name,is_admin")
@@ -241,20 +260,26 @@ export default function Home() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username, full_name: fullName } },
       });
       if (error) {
         setAuthMessage(error.message);
         return;
       }
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(pendingProfileKey(email), JSON.stringify({ username, fullName }));
+      }
       if (data.user) {
-        await supabase.from("profiles").upsert({
+        const { error: profileError } = await supabase.from("profiles").upsert({
           id: data.user.id,
           email,
           username,
           full_name: fullName,
           updated_at: new Date().toISOString(),
         });
+        if (profileError && !data.session) {
+          setAuthMessage("가입 확인 메일을 확인하세요. 이름은 첫 로그인 때 저장됩니다.");
+          return;
+        }
       }
       setAuthMessage("가입 확인 메일을 확인하세요.");
       return;
