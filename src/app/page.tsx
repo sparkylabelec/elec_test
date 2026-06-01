@@ -12,7 +12,7 @@ import {
   summaryBlankQuestions,
 } from "@/lib/questions";
 import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
-import { cleanMathText, nextProgress, parseCard } from "@/lib/quiz";
+import { displayMathText, nextProgress, parseCard } from "@/lib/quiz";
 import {
   readLocalProgress,
   readLocalSavedQuestionIds,
@@ -55,6 +55,14 @@ type AdminMemberStats = {
   saved: number;
   lastAttempt: string;
 };
+
+declare global {
+  interface Window {
+    MathJax?: {
+      typesetPromise?: () => Promise<void>;
+    };
+  }
+}
 
 const modeLabels: Record<QuizMode, string> = {
   multiple: "객관식",
@@ -105,8 +113,8 @@ export default function Home() {
   const parsed = useMemo(() => (current ? parseCard(current.question) : null), [current]);
   const allQuestions = useMemo(() => [...questions, ...summaryBlankQuestions], []);
   const activeMode = current?.mode ?? "multiple";
-  const blankPrompt = current && activeMode === "blank" ? cleanMathText(current.question.question) : "";
-  const blankCorrectAnswer = current && activeMode === "blank" ? cleanMathText(current.question.answer) : "";
+  const blankPrompt = current && activeMode === "blank" ? displayMathText(current.question.question) : "";
+  const blankCorrectAnswer = current && activeMode === "blank" ? displayMathText(current.question.answer) : "";
   const remaining = queue.filter((item) => !item.solved).length;
   const solvedCount = queue.filter((item) => item.solved).length;
   const progressPercent = queue.length > 0 ? Math.round((solvedCount / queue.length) * 100) : 0;
@@ -219,6 +227,12 @@ export default function Home() {
       writeLocalSavedQuestionIds(merged, userStorageKey);
     });
   }, [supabase, user, userStorageKey]);
+
+  useEffect(() => {
+    const mathJax = window.MathJax;
+    if (!mathJax?.typesetPromise) return;
+    void mathJax.typesetPromise();
+  }, [currentIndex, isBack, queue, result]);
 
   function itemModeFor(question: QuizQuestion): Exclude<QuizMode, "mixed"> {
     return question.id.startsWith("summary-") ? "blank" : "multiple";
@@ -927,7 +941,7 @@ export default function Home() {
                         </p>
                         {current.question.explanation ? (
                           <div className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[#344252]">
-                            {cleanMathText(current.question.explanation)}
+                            {displayMathText(current.question.explanation)}
                           </div>
                         ) : null}
                         {activeMode === "blank" && !result ? (

@@ -44,6 +44,22 @@ export function cleanMathText(value: string) {
     .trim();
 }
 
+export function hasLatex(value: string) {
+  return /\\\(|\\\[|\\frac|\\sqrt|\\cdot|\\times|\\Omega|\\theta|\\omega|\\phi|[_^{}]/.test(value);
+}
+
+export function displayMathText(value: string) {
+  if (hasLatex(value)) {
+    return value
+      .replace(/\\\\/g, "\\")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  return cleanMathText(value);
+}
+
 export function parseCard(question: QuizQuestion): ParsedCard {
   const normalized = cleanMathText(
     question.question.replace(/[❶➊]/g, "①").replace(/[❷➋]/g, "②").replace(/[❸➌]/g, "③").replace(/[❹➍]/g, "④"),
