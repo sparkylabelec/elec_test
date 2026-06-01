@@ -6,7 +6,8 @@
 
 - 이메일/비밀번호 회원가입 및 로그인
 - 가입 시 이름 입력
-- 비밀번호 재설정 메일 발송
+- 가입 확인 메일 없이 즉시 가입
+- 비밀번호 재설정에만 이메일 발송
 - 객관식, 암기모드, 혼합 출제
 - 객관식 보기 랜덤 섞기 및 정답 번호 반영
 - Anki식 반복 학습: `Fail`은 복습 대기열로, `OK`는 완료 처리
@@ -37,7 +38,10 @@ Supabase 환경 변수가 없으면 브라우저 로컬 저장소 기반 데모 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+`SUPABASE_SERVICE_ROLE_KEY`는 서버 전용 값입니다. `NEXT_PUBLIC_` 접두사를 붙이지 말고, 브라우저 코드에 노출하지 마세요. 이 앱은 가입 확인 메일을 보내지 않기 위해 서버 API에서 Supabase Admin으로 사용자를 즉시 confirmed 상태로 생성합니다.
 
 관리자 계정은 Supabase SQL Editor에서 해당 사용자의 `profiles.is_admin` 값을 `true`로 변경하면 됩니다.
 
@@ -68,6 +72,7 @@ npx supabase db push
 ```bash
 npx vercel env add NEXT_PUBLIC_SUPABASE_URL production
 npx vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+npx vercel env add SUPABASE_SERVICE_ROLE_KEY production
 npx vercel --prod
 ```
 

@@ -272,31 +272,23 @@ export default function Home() {
       }
 
       if (authMode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
+        const signupResponse = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, username, fullName }),
         });
-        if (error) {
-          setAuthMessage(formatAuthError(error.message));
+        const signupPayload = await signupResponse.json().catch(() => null) as { message?: string } | null;
+        if (!signupResponse.ok) {
+          setAuthMessage(formatAuthError(signupPayload?.message ?? "회원가입에 실패했습니다."));
           return;
         }
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(pendingProfileKey(email), JSON.stringify({ username, fullName }));
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error || !data.user?.email) {
+          setAuthMessage(formatAuthError(error?.message ?? "가입은 완료됐지만 자동 로그인에 실패했습니다. 로그인 탭에서 다시 로그인하세요."));
+          return;
         }
-        if (data.user) {
-          const { error: profileError } = await supabase.from("profiles").upsert({
-            id: data.user.id,
-            email,
-            username,
-            full_name: fullName,
-            updated_at: new Date().toISOString(),
-          });
-          if (profileError && !data.session) {
-            setAuthMessage("가입 확인 메일을 확인하세요. 이름은 첫 로그인 때 저장됩니다.");
-            return;
-          }
-        }
-        setAuthMessage("가입 확인 메일을 확인하세요.");
+        await applyAuthenticatedUser(data.user);
         return;
       }
 
@@ -637,8 +629,11 @@ export default function Home() {
                       </button>
                     </div>
                   </label>
-                  <button className="h-10 w-full rounded-md bg-[#245c7a] font-medium text-white hover:bg-[#1f506a]">
-                    {authMode === "login" ? "로그인" : "가입"}
+                  <button
+                    className="h-10 w-full rounded-md bg-[#245c7a] font-medium text-white hover:bg-[#1f506a] disabled:opacity-60"
+                    disabled={isAuthSubmitting}
+                  >
+                    {isAuthSubmitting ? "처리 중" : authMode === "login" ? "로그인" : "가입"}
                   </button>
                   {authMode === "login" ? (
                     <button
