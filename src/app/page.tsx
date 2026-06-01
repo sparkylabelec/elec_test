@@ -64,6 +64,17 @@ const modeLabels: Record<QuizMode, string> = {
 
 const pendingProfileKey = (emailValue: string) => `pending-profile:${emailValue.trim().toLowerCase()}`;
 
+function formatAuthError(message = "인증 처리에 실패했습니다.") {
+  const lowerMessage = message.toLowerCase();
+  if (lowerMessage.includes("email rate limit exceeded")) {
+    return "가입 확인 메일 발송 한도를 초과했습니다. Supabase 기본 메일은 시간당 발송 수가 매우 낮습니다. 잠시 후 다시 시도하거나 관리자에게 SMTP 설정을 요청하세요.";
+  }
+  if (lowerMessage.includes("invalid")) {
+    return "이메일 또는 입력값 형식이 올바르지 않습니다.";
+  }
+  return message;
+}
+
 export default function Home() {
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -73,6 +84,7 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState<UserState | null>(null);
   const [authMessage, setAuthMessage] = useState("");
+  const [isAuthSubmitting, setIsAuthSubmitting] = useState(false);
   const [count, setCount] = useState(30);
   const [mode, setMode] = useState<QuizMode>("multiple");
   const [queue, setQueue] = useState<QuizItem[]>([]);
@@ -244,53 +256,59 @@ export default function Home() {
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setAuthMessage("");
+    if (isAuthSubmitting) return;
+    setIsAuthSubmitting(true);
 
-    if (!hasSupabaseEnv() || !supabase) {
-      setUser({
-        email,
-        username: username || email.split("@")[0] || "local",
-        fullName: fullName || username || email.split("@")[0] || "local",
-        isAdmin: false,
-      });
-      setAuthMessage("Supabase 환경변수가 없어 로컬 모드로 시작했습니다.");
-      return;
-    }
-
-    if (authMode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) {
-        setAuthMessage(error.message);
+    try {
+      if (!hasSupabaseEnv() || !supabase) {
+        setUser({
+          email,
+          username: username || email.split("@")[0] || "local",
+          fullName: fullName || username || email.split("@")[0] || "local",
+          isAdmin: false,
+        });
+        setAuthMessage("Supabase 환경변수가 없어 로컬 모드로 시작했습니다.");
         return;
       }
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(pendingProfileKey(email), JSON.stringify({ username, fullName }));
-      }
-      if (data.user) {
-        const { error: profileError } = await supabase.from("profiles").upsert({
-          id: data.user.id,
+
+      if (authMode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
           email,
-          username,
-          full_name: fullName,
-          updated_at: new Date().toISOString(),
+          password,
         });
-        if (profileError && !data.session) {
-          setAuthMessage("가입 확인 메일을 확인하세요. 이름은 첫 로그인 때 저장됩니다.");
+        if (error) {
+          setAuthMessage(formatAuthError(error.message));
           return;
         }
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(pendingProfileKey(email), JSON.stringify({ username, fullName }));
+        }
+        if (data.user) {
+          const { error: profileError } = await supabase.from("profiles").upsert({
+            id: data.user.id,
+            email,
+            username,
+            full_name: fullName,
+            updated_at: new Date().toISOString(),
+          });
+          if (profileError && !data.session) {
+            setAuthMessage("가입 확인 메일을 확인하세요. 이름은 첫 로그인 때 저장됩니다.");
+            return;
+          }
+        }
+        setAuthMessage("가입 확인 메일을 확인하세요.");
+        return;
       }
-      setAuthMessage("가입 확인 메일을 확인하세요.");
-      return;
-    }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error || !data.user?.email) {
-      setAuthMessage(error?.message ?? "로그인에 실패했습니다.");
-      return;
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.user?.email) {
+        setAuthMessage(formatAuthError(error?.message ?? "로그인에 실패했습니다."));
+        return;
+      }
+      await applyAuthenticatedUser(data.user);
+    } finally {
+      setIsAuthSubmitting(false);
     }
-    await applyAuthenticatedUser(data.user);
   }
 
   async function handlePasswordReset() {
@@ -309,7 +327,7 @@ export default function Home() {
       redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
     });
 
-    setAuthMessage(error ? error.message : "비밀번호 재설정 메일을 보냈습니다.");
+    setAuthMessage(error ? formatAuthError(error.message) : "비밀번호 재설정 메일을 보냈습니다.");
   }
 
   async function handleLogout() {
