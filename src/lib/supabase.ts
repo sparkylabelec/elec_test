@@ -2,8 +2,12 @@ import { createBrowserClient } from "@supabase/ssr";
 
 let browserClient: ReturnType<typeof createBrowserClient> | null = null;
 
+function cleanEnvValue(value: string | undefined) {
+  return value?.replace(/\uFEFF/g, "").trim() ?? "";
+}
+
 export function hasSupabaseEnv() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  return Boolean(cleanEnvValue(process.env.NEXT_PUBLIC_SUPABASE_URL) && cleanEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY));
 }
 
 export function getSupabaseBrowserClient() {
@@ -12,8 +16,8 @@ export function getSupabaseBrowserClient() {
   }
   if (!browserClient) {
     browserClient = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      cleanEnvValue(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      cleanEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     );
   }
   return browserClient;
