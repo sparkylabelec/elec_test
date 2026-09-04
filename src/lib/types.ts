@@ -42,3 +42,20 @@ export type CardProgress = {
   dueAt: string;
   lastQuality: number;
 };
+
+export type SavedQuizSetItem = {
+  questionId: string;
+  mode: Exclude<QuizMode, "mixed">;
+  position: number;
+};
+
+export type SavedQuizSet = {
+  id: string;
+  title: string;
+  mode: QuizMode;
+  categoryFilter: string;
+  formulaOnly: boolean;
+  questionCount: number;
+  createdAt: string;
+  items: SavedQuizSetItem[];
+};

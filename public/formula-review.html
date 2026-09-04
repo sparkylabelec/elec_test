@@ -1,0 +1,3543 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>기능사요점정리 공식 검토</title>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]], displayMath: [["\\[", "\\]"]] },
+      options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #d8e1ec;
+      --soft: #f6f8fb;
+      --accent: #286984;
+      --accent-weak: #e9f3f7;
+      --danger: #9f2e2e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      color: var(--ink);
+      background: #f8fafc;
+      line-height: 1.55;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+    }
+    .header-inner {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 14px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    .summary {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    button, select {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: white;
+      color: var(--ink);
+      padding: 0 12px;
+      font-size: 14px;
+    }
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+    button.warn {
+      border-color: #f2c0c0;
+      color: var(--danger);
+    }
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 18px auto 40px;
+    }
+    .formula-card {
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 16px;
+    }
+    .formula-card.has-note {
+      border-color: #f0b8b8;
+      background: #fffafa;
+    }
+    .formula-card.excluded {
+      opacity: 0.62;
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .check-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .check-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid #eef2f7;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .content {
+      min-width: 0;
+      white-space: pre-wrap;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .formula {
+      font-size: 18px;
+    }
+    .memo {
+      display: block;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eef2f7;
+    }
+    .memo span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    textarea {
+      width: 100%;
+      min-height: 78px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      font: inherit;
+      background: var(--soft);
+    }
+    textarea:focus {
+      outline: 2px solid var(--accent-weak);
+      border-color: var(--accent);
+      background: white;
+    }
+    .hidden { display: none; }
+    @media (max-width: 720px) {
+      .card-top, .field {
+        display: block;
+      }
+      .meta {
+        display: block;
+        margin-top: 8px;
+        text-align: left;
+      }
+      .label {
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>기능사요점정리 공식 검토</h1>
+      <p class="summary">
+        총 124개 · 전기회로 86개 · 전기기기 29개 · 전기설비 9개 ·
+        선택 <strong id="selectedCount">124</strong>개 · 수정 지시 <strong id="noteCount">0</strong>개
+      </p>
+      <div class="toolbar">
+        <select id="categoryFilter" aria-label="분야 필터">
+          <option value="all">전체 분야</option>
+          <option value="전기회로">전기회로</option>
+          <option value="전기기기">전기기기</option>
+          <option value="전기설비">전기설비</option>
+        </select>
+        <button type="button" id="selectAll">전체 선택</button>
+        <button type="button" id="clearAll">전체 해제</button>
+        <button type="button" id="showNotes">수정 지시만 보기</button>
+        <button type="button" id="showAll">전체 보기</button>
+        <button type="button" class="primary" id="downloadReview">검토 결과 JSON 저장</button>
+      </div>
+    </div>
+  </header>
+  <main id="cards">
+    
+      <article class="formula-card" data-id="summary-theory-062" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">1. 전기기기 · 1쪽 직류 발전기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">직류 발전기에서 자속, 회전수, 도체수, 극수, 병렬회로수를 이용하여 유도 기전력 \(E\)를 구하는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(E=e\frac{Z}{a}=\frac{P\Phi N}{60}\frac{Z}{a}=\frac{PZ}{60a}\Phi N=K\Phi N\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 직류 발전기 공식: \(E=e\frac{Z}{a}=\frac{P\Phi N}{60}\frac{Z}{a}=\frac{PZ}{60a}\Phi N=K\Phi N\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-063" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">2. 전기기기 · 1쪽 직류 전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">직류 전동기에서 단자전압, 전기자전류, 전기자저항을 이용하여 역기전력 \(E\)를 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(E=K\Phi N=V-I_aR_a\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 직류 전동기 공식: \(E=K\Phi N=V-I_aR_a\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-064" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">3. 전기기기 · 1쪽 직류 전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">직류 전동기의 회전속도 \(N\)을 역기전력 \(E\)와 자속 \(\Phi\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(N=K\frac{E}{\Phi}=K\frac{V-I_aR_a}{\Phi}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 직류 전동기 공식: \(N=K\frac{E}{\Phi}=K\frac{V-I_aR_a}{\Phi}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-065" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">4. 전기기기 · 1쪽 효율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기기기에서 실측 효율 \(\eta\)를 입력과 출력으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\eta=\frac{\text{출력}}{\text{입력}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 효율 공식: \(\eta=\frac{\text{출력}}{\text{입력}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-066" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">5. 전기기기 · 1쪽 발전기 효율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">발전기에서 규약효율 \(\eta_G\)를 출력과 손실로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\eta_G=\frac{\text{출력}}{\text{출력}+\text{손실}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 발전기 효율 공식: \(\eta_G=\frac{\text{출력}}{\text{출력}+\text{손실}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-067" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">6. 전기기기 · 1쪽 전동기 효율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전동기에서 규약효율 \(\eta_M\)를 입력과 손실로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\eta_M=\frac{\text{입력}-\text{손실}}{\text{입력}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 전동기 효율 공식: \(\eta_M=\frac{\text{입력}-\text{손실}}{\text{입력}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-068" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">7. 전기기기 · 1쪽 직권 전동기 토크</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">직권 전동기의 토크가 전류 및 속도와 어떤 비례 관계를 갖는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\tau\propto I^2,\quad \tau\propto\frac{1}{N^2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 직권 전동기 토크 공식: \(\tau\propto I^2,\quad \tau\propto\frac{1}{N^2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-069" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">8. 전기기기 · 1쪽 속도변동률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전동기의 속도변동률 \(\epsilon\)을 무부하속도와 정격속도로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\epsilon=\frac{N_0-N_n}{N_n}\times100=\frac{\text{무부하}-\text{정격}}{\text{정격}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 속도변동률 공식: \(\epsilon=\frac{N_0-N_n}{N_n}\times100=\frac{\text{무부하}-\text{정격}}{\text{정격}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-070" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">9. 전기기기 · 1쪽 토크 공식</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전동기 토크 \(T\)를 출력 \(P\)와 회전수 \(N\)으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(T=0.975\frac{P}{N}\,[\mathrm{kg\cdot m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 토크 공식 공식: \(T=0.975\frac{P}{N}\,[\mathrm{kg\cdot m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-071" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">10. 전기기기 · 1쪽 변압기 권수비</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">이상 변압기에서 권수비 \(a\)를 전압, 전류, 임피던스, 저항, 인덕턴스의 비로 나타내는 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(a=\frac{N_1}{N_2}=\frac{V_1}{V_2}=\frac{I_2}{I_1}=\sqrt{\frac{Z_1}{Z_2}}=\sqrt{\frac{R_1}{R_2}}=\sqrt{\frac{L_1}{L_2}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">1쪽 변압기 권수비 공식: \(a=\frac{N_1}{N_2}=\frac{V_1}{V_2}=\frac{I_2}{I_1}=\sqrt{\frac{Z_1}{Z_2}}=\sqrt{\frac{R_1}{R_2}}=\sqrt{\frac{L_1}{L_2}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-072" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">11. 전기기기 · 2쪽 변압기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기의 유기기전력 \(E\)를 주파수, 자속, 권수로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(E=4.44f\Phi N\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 변압기 공식: \(E=4.44f\Phi N\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-073" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">12. 전기기기 · 2쪽 변압기 효율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 효율 \(\eta\)를 출력과 손실로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\eta=\frac{\text{출력}}{\text{출력}+\text{손실}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 변압기 효율 공식: \(\eta=\frac{\text{출력}}{\text{출력}+\text{손실}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-074" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">13. 전기기기 · 2쪽 철손</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 히스테리시스손 \(P_h\)를 주파수와 최대자속밀도로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_h=K_h f B_m^2\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 철손 공식: \(P_h=K_h f B_m^2\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-075" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">14. 전기기기 · 2쪽 철손</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 맴돌이전류손 \(P_e\)를 주파수, 두께, 최대자속밀도로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_e=K_e f^2t^2B_m^2\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 철손 공식: \(P_e=K_e f^2t^2B_m^2\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-076" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">15. 전기기기 · 2쪽 전압 변동률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 전압 변동률 \(\epsilon\)을 무부하전압과 정격전압으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\epsilon=\frac{\text{무부하전압}-\text{정격전압}}{\text{정격전압}}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 전압 변동률 공식: \(\epsilon=\frac{\text{무부하전압}-\text{정격전압}}{\text{정격전압}}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-077" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">16. 전기기기 · 2쪽 백분율 전압강하</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 백분율 전압강하 \(\epsilon\)를 저항강하율 \(p\), 리액턴스강하율 \(q\), 역률각 \(\theta\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\epsilon=p\cos\theta+q\sin\theta\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 백분율 전압강하 공식: \(\epsilon=p\cos\theta+q\sin\theta\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-078" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">17. 전기기기 · 2쪽 V결선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">변압기 V결선의 3상 공급전력을 단상 변압기 1대 공급전력과 비교하면 어떻게 되는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_V=\sqrt{3}\times P_{1\text{대}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">2쪽 V결선 공식: \(P_V=\sqrt{3}\times P_{1\text{대}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-079" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">18. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기의 동기속도 \(N_s\)를 주파수 \(f\)와 극수 \(p\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(N_s=\frac{120f}{p}\,[\mathrm{rpm}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(N_s=\frac{120f}{p}\,[\mathrm{rpm}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-080" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">19. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기의 슬립 \(s\)를 동기속도와 회전자속도로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(s=\frac{N_s-N}{N_s}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(s=\frac{N_s-N}{N_s}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-081" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">20. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기 회전자 속도 \(N\)을 슬립 \(s\)와 동기속도 \(N_s\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(N=(1-s)N_s\,[\mathrm{rpm}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(N=(1-s)N_s\,[\mathrm{rpm}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-082" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">21. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기 2차 주파수 \(f_2\)를 전원 주파수 \(f_1\)와 슬립 \(s\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(f_2=sf_1\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(f_2=sf_1\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-083" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">22. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기 2차 저항손 \(P_{c2}\)을 2차 입력 \(P_2\)과 슬립 \(s\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_{c2}=sP_2\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(P_{c2}=sP_2\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-084" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">23. 전기기기 · 3쪽 유도전동기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도전동기 슬립 \(s\)를 2차 전체 저항손과 2차 전체 입력으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(s=\frac{P_{c2}}{P_2}=\frac{\text{2차 전체 저항손}}{\text{2차 전체 입력}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 유도전동기 공식: \(s=\frac{P_{c2}}{P_2}=\frac{\text{2차 전체 저항손}}{\text{2차 전체 입력}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-085" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">24. 전기기기 · 3쪽 전동기 출력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">단상 전동기 출력 \(P\)를 전압, 전류, 역률로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 전동기 출력 공식: \(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-086" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">25. 전기기기 · 3쪽 전동기 출력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">3상 전동기 출력 \(P\)를 전압, 전류, 역률로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=\sqrt{3}VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 전동기 출력 공식: \(P=\sqrt{3}VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-087" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">26. 전기기기 · 3쪽 동기발전기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">동기발전기의 주변속도 \(v\)를 지름 \(D\)와 회전수 \(N\)으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(v=\pi Dn=\pi D\frac{N}{60}\,[\mathrm{m/sec}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 동기발전기 공식: \(v=\pi Dn=\pi D\frac{N}{60}\,[\mathrm{m/sec}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-088" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">27. 전기기기 · 3쪽 동기발전기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">동기발전기에서 매극 매상당 슬롯 수 \(q\)를 구하는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(q=\frac{\text{총 슬롯 수}}{\text{상수}\times\text{극수}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 동기발전기 공식: \(q=\frac{\text{총 슬롯 수}}{\text{상수}\times\text{극수}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-089" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">28. 전기기기 · 3쪽 단락비</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">동기기의 단락비 \(K\)를 계자전류, 정격전류, 퍼센트 임피던스로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(K=\frac{I_f&#39;}{I_f&#39;&#39;}=\frac{I_s}{I_n}=\frac{100}{\%Z}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">3쪽 단락비 공식: \(K=\frac{I_f&#39;}{I_f&#39;&#39;}=\frac{I_s}{I_n}=\frac{100}{\%Z}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-090" data-category="전기기기">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">29. 전기기기 · 4쪽 정류회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">정류회로의 맥동률은 직류분과 교류분으로 어떻게 정의되는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\text{맥동률}=\frac{\text{교류분}}{\text{직류분}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">4쪽 정류회로 공식: \(\text{맥동률}=\frac{\text{교류분}}{\text{직류분}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-091" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">30. 전기설비 · 5쪽 전선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">연선에서 총 소선 수 \(N\)을 층수 \(n\)으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(N=3n(n+1)+1\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">5쪽 전선 공식: \(N=3n(n+1)+1\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-092" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">31. 전기설비 · 5쪽 전선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">연선의 단면적 \(A\)를 소선 1가닥 단면적 \(a\)와 총 소선 수 \(N\)으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(A=aN\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">5쪽 전선 공식: \(A=aN\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-093" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">32. 전기설비 · 5쪽 전선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">경동선과 연동선의 고유저항 값을 \(\Omega\cdot\mathrm{mm^2/m}\) 단위로 나타내면 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\rho_{\text{경동선}}=\frac{1}{55},\quad \rho_{\text{연동선}}=\frac{1}{58}\,[\Omega\cdot\mathrm{mm^2/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">5쪽 전선 공식: \(\rho_{\text{경동선}}=\frac{1}{55},\quad \rho_{\text{연동선}}=\frac{1}{58}\,[\Omega\cdot\mathrm{mm^2/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-094" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">33. 전기설비 · 6쪽 금속관</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">굽은 부분이 있는 금속관에서 굽힘 반지름 \(r\)을 관 지름 \(d\)와 부속품 치수 \(D\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(r=6d+\frac{D}{2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">6쪽 금속관 공식: \(r=6d+\frac{D}{2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-095" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">34. 전기설비 · 8쪽 설비 불평형률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">단상 3선식의 설비 불평형률 기준값은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(40\%\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">8쪽 설비 불평형률 공식: \(40\%\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-096" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">35. 전기설비 · 8쪽 설비 불평형률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">3상 3선식 및 3상 4선식의 설비 불평형률 기준값은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(30\%\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">8쪽 설비 불평형률 공식: \(30\%\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-097" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">36. 전기설비 · 8쪽 수용률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">수용률을 최대수용전력과 부하설비합계로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\text{수용률}=\frac{\text{최대 수용 전력}\,[\mathrm{kW}]}{\text{부하 설비 합계}\,[\mathrm{kW}]}\times100\,[\%]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">8쪽 수용률 공식: \(\text{수용률}=\frac{\text{최대 수용 전력}\,[\mathrm{kW}]}{\text{부하 설비 합계}\,[\mathrm{kW}]}\times100\,[\%]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-098" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">37. 전기설비 · 8쪽 부하설비용량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">건물의 부하설비 용량 추정값을 부하밀도와 연면적으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\text{부하설비 용량}\,[\mathrm{VA}]=\text{부하밀도}\,[\mathrm{VA/m^2}]\times\text{연면적}\,[\mathrm{m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">8쪽 부하설비용량 공식: \(\text{부하설비 용량}\,[\mathrm{VA}]=\text{부하밀도}\,[\mathrm{VA/m^2}]\times\text{연면적}\,[\mathrm{m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-099" data-category="전기설비">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">38. 전기설비 · 8쪽 조명</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">실지수 \(K\)를 방의 가로 \(X\), 세로 \(Y\), 조명기구 높이 \(H\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(K=\frac{XY}{H(X+Y)}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">8쪽 조명 공식: \(K=\frac{XY}{H(X+Y)}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-100" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">39. 전기회로 · 9쪽 전류</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전류 \(I\)를 전기량 \(Q\)와 시간 \(t\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(I=\frac{Q}{t}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전류 공식: \(I=\frac{Q}{t}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-101" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">40. 전기회로 · 9쪽 전기량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기량 \(Q\)를 전류 \(I\)와 시간 \(t\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Q=It\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전기량 공식: \(Q=It\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-102" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">41. 전기회로 · 9쪽 전압</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전압 \(V\)를 일 \(W\)와 전기량 \(Q\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V=\frac{W}{Q}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전압 공식: \(V=\frac{W}{Q}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-103" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">42. 전기회로 · 9쪽 일</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기량 \(Q\)가 전압 \(V\)에서 한 일 \(W\)를 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=QV\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 일 공식: \(W=QV\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-104" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">43. 전기회로 · 9쪽 저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">도체의 저항 \(R\)을 고유저항, 길이, 단면적으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R=\rho\frac{l}{S}\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 저항 공식: \(R=\rho\frac{l}{S}\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-105" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">44. 전기회로 · 9쪽 도전율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">도전율 \(\sigma\)와 고유저항 \(\rho\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\sigma=\frac{1}{\rho}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 도전율 공식: \(\sigma=\frac{1}{\rho}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-106" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">45. 전기회로 · 9쪽 저항 단위</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">\(\Omega\cdot\mathrm{m}\), \(\Omega\cdot\mathrm{cm}\), \(\Omega\cdot\mathrm{mm^2/m}\) 사이의 대표 변환식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(1\,[\Omega\cdot\mathrm{m}]=10^2\,[\Omega\cdot\mathrm{cm}]=10^6\,[\Omega\cdot\mathrm{mm^2/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 저항 단위 공식: \(1\,[\Omega\cdot\mathrm{m}]=10^2\,[\Omega\cdot\mathrm{cm}]=10^6\,[\Omega\cdot\mathrm{mm^2/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-107" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">46. 전기회로 · 9쪽 컨덕턴스</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">컨덕턴스 \(G\)를 저항 \(R\)으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(G=\frac{1}{R}\,[\mho]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 컨덕턴스 공식: \(G=\frac{1}{R}\,[\mho]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-108" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">47. 전기회로 · 9쪽 어드미턴스</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">어드미턴스 \(Y\)를 임피던스 \(Z\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Y=\frac{1}{Z}\,[\mho]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 어드미턴스 공식: \(Y=\frac{1}{Z}\,[\mho]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-109" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">48. 전기회로 · 9쪽 옴의 법칙</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전압, 전류, 저항 사이의 옴의 법칙을 전류 기준으로 쓰면 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(I=\frac{V}{R}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 옴의 법칙 공식: \(I=\frac{V}{R}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-110" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">49. 전기회로 · 9쪽 직렬저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">저항 \(n\)개를 직렬 접속했을 때 합성저항 \(R\)은 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R=R_1+R_2+\cdots+R_n\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 직렬저항 공식: \(R=R_1+R_2+\cdots+R_n\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-111" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">50. 전기회로 · 9쪽 병렬저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">저항 \(n\)개를 병렬 접속했을 때 합성저항 \(R\)은 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R=\frac{1}{\frac{1}{R_1}+\frac{1}{R_2}+\cdots+\frac{1}{R_n}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 병렬저항 공식: \(R=\frac{1}{\frac{1}{R_1}+\frac{1}{R_2}+\cdots+\frac{1}{R_n}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-112" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">51. 전기회로 · 9쪽 병렬저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">두 저항 \(R_1,R_2\)의 병렬 합성저항 \(R_p\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R_p=\frac{R_1R_2}{R_1+R_2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 병렬저항 공식: \(R_p=\frac{R_1R_2}{R_1+R_2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-113" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">52. 전기회로 · 9쪽 병렬저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">세 저항 \(R_1,R_2,R_3\)의 병렬 합성저항 \(R_p\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R_p=\frac{R_1R_2R_3}{R_1R_2+R_1R_3+R_2R_3}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 병렬저항 공식: \(R_p=\frac{R_1R_2R_3}{R_1R_2+R_1R_3+R_2R_3}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-114" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">53. 전기회로 · 9쪽 전지</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전지 \(n\)개를 직렬 접속하고 외부저항 \(R\), 내부저항 \(r\), 전지 기전력 \(E\)일 때 전류 \(I\)는?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(I=\frac{nE}{nr+R}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전지 공식: \(I=\frac{nE}{nr+R}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-115" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">54. 전기회로 · 9쪽 전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전력 \(P\)를 일 \(W\)와 시간 \(t\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=\frac{W}{t}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전력 공식: \(P=\frac{W}{t}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-116" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">55. 전기회로 · 9쪽 전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기회로에서 전력 \(P\)를 전압, 전류, 저항으로 나타내는 공식들은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=VI=\frac{V^2}{R}=I^2R\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전력 공식: \(P=VI=\frac{V^2}{R}=I^2R\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-117" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">56. 전기회로 · 9쪽 전력량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전력량 \(W\)를 전력 \(P\)와 시간 \(t\)로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=Pt\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전력량 공식: \(W=Pt\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-118" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">57. 전기회로 · 9쪽 전력량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">\(1\,\mathrm{kWh}\)를 줄 \(J\) 단위로 환산하면 얼마인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(1\,[\mathrm{kWh}]=10^3\,[\mathrm{Wh}]=10^3\times3600\,[\mathrm{W\cdot sec}]=3.6\times10^6\,[\mathrm{J}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전력량 공식: \(1\,[\mathrm{kWh}]=10^3\,[\mathrm{Wh}]=10^3\times3600\,[\mathrm{W\cdot sec}]=3.6\times10^6\,[\mathrm{J}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-119" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">58. 전기회로 · 9쪽 줄의 법칙</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전류의 열작용에서 발생 열량 \(H\)를 전류, 저항, 시간으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(H=0.24I^2Rt\,[\mathrm{cal}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 줄의 법칙 공식: \(H=0.24I^2Rt\,[\mathrm{cal}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-120" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">59. 전기회로 · 9쪽 전열기 용량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전열기 용량을 물의 질량, 비열, 온도변화와 연결하는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(860Pt\eta=McT\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">9쪽 전열기 용량 공식: \(860Pt\eta=McT\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-121" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">60. 전기회로 · 10쪽 전기분해</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">패러데이의 법칙에서 석출량 \(W\)를 전기화학당량, 전기량, 전류, 시간으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=KQ=KIt\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전기분해 공식: \(W=KQ=KIt\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-122" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">61. 전기회로 · 10쪽 쿨롱의 법칙</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">두 전하 사이의 전기력 \(F\)를 전하량과 거리로 나타내는 쿨롱의 법칙은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=\frac{1}{4\pi\epsilon}\frac{Q_1Q_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 쿨롱의 법칙 공식: \(F=\frac{1}{4\pi\epsilon}\frac{Q_1Q_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-123" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">62. 전기회로 · 10쪽 유전율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유전율 \(\epsilon\)을 진공 유전율과 비유전율로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\epsilon=\epsilon_0\epsilon_s\,[\mathrm{F/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 유전율 공식: \(\epsilon=\epsilon_0\epsilon_s\,[\mathrm{F/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-124" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">63. 전기회로 · 10쪽 진공 중 정전기력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">진공 중 두 전하 사이 정전기력 \(F\)를 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=9\times10^9\frac{Q_1Q_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 진공 중 정전기력 공식: \(F=9\times10^9\frac{Q_1Q_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-125" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">64. 전기회로 · 10쪽 전하량</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">콘덴서에서 전하량 \(Q\), 정전용량 \(C\), 전압 \(V\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Q=CV\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전하량 공식: \(Q=CV\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-126" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">65. 전기회로 · 10쪽 평판 커패시터</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">평판 커패시터의 정전용량 \(C\)를 전하량, 전압, 유전율, 면적, 거리로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(C=\frac{Q}{V}=\epsilon\frac{S}{d}\,[\mathrm{F}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 평판 커패시터 공식: \(C=\frac{Q}{V}=\epsilon\frac{S}{d}\,[\mathrm{F}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-127" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">66. 전기회로 · 10쪽 접두어</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">커패시터 단위에서 \(\mu\mathrm{F}\), \(\mathrm{nF}\), \(\mathrm{pF}\)의 패럿 환산은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(1\,\mu\mathrm{F}=10^{-6}\,\mathrm{F},\quad1\,\mathrm{nF}=10^{-9}\,\mathrm{F},\quad1\,\mathrm{pF}=10^{-12}\,\mathrm{F}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 접두어 공식: \(1\,\mu\mathrm{F}=10^{-6}\,\mathrm{F},\quad1\,\mathrm{nF}=10^{-9}\,\mathrm{F},\quad1\,\mathrm{pF}=10^{-12}\,\mathrm{F}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-128" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">67. 전기회로 · 10쪽 전속밀도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전속밀도 \(D\)를 전하량, 면적, 전계로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(D=\frac{Q}{S},\quad D=\epsilon E=\epsilon_0\epsilon_sE\,[\mathrm{C/m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전속밀도 공식: \(D=\frac{Q}{S},\quad D=\epsilon E=\epsilon_0\epsilon_sE\,[\mathrm{C/m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-129" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">68. 전기회로 · 10쪽 전위</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">점전하 주위의 전위 \(V\)를 전계 또는 전하량과 거리로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V=Er,\quad V=\frac{1}{4\pi\epsilon}\frac{Q}{r}\,[\mathrm{V}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전위 공식: \(V=Er,\quad V=\frac{1}{4\pi\epsilon}\frac{Q}{r}\,[\mathrm{V}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-130" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">69. 전기회로 · 10쪽 콘덴서 직렬</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">콘덴서 3개를 직렬 접속했을 때 합성정전용량 \(C\)는 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(C=\frac{1}{\frac{1}{C_1}+\frac{1}{C_2}+\frac{1}{C_3}}\,[\mathrm{F}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 콘덴서 직렬 공식: \(C=\frac{1}{\frac{1}{C_1}+\frac{1}{C_2}+\frac{1}{C_3}}\,[\mathrm{F}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-131" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">70. 전기회로 · 10쪽 콘덴서 직렬</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">콘덴서 2개를 직렬 접속했을 때 합성정전용량 \(C\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(C=\frac{C_1C_2}{C_1+C_2}\,[\mathrm{F}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 콘덴서 직렬 공식: \(C=\frac{C_1C_2}{C_1+C_2}\,[\mathrm{F}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-132" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">71. 전기회로 · 10쪽 콘덴서 병렬</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">콘덴서 3개를 병렬 접속했을 때 합성정전용량 \(C\)는 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(C=C_1+C_2+C_3\,[\mathrm{F}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 콘덴서 병렬 공식: \(C=C_1+C_2+C_3\,[\mathrm{F}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-133" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">72. 전기회로 · 10쪽 정전흡인력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">정전흡인력 \(W\)를 유전율과 전계로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=\frac{1}{2}\epsilon E^2\,[\mathrm{N/m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 정전흡인력 공식: \(W=\frac{1}{2}\epsilon E^2\,[\mathrm{N/m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-134" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">73. 전기회로 · 10쪽 자기회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기회로의 기자력 \(F\)를 권수와 전류 또는 자기저항과 자속으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=NI=R\phi\,[\mathrm{AT}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기회로 공식: \(F=NI=R\phi\,[\mathrm{AT}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-135" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">74. 전기회로 · 10쪽 자기회로 대응</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기회로의 기전력 \(E\), 전류 \(I\), 저항 \(R\) 사이의 대응 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(E=IR,\quad I=\frac{E}{R}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기회로 대응 공식: \(E=IR,\quad I=\frac{E}{R}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-136" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">75. 전기회로 · 10쪽 자기회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기회로에서 자속 \(\phi\)를 기자력과 자기저항으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\phi=\frac{F}{R}\,[\mathrm{Wb}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기회로 공식: \(\phi=\frac{F}{R}\,[\mathrm{Wb}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-137" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">76. 전기회로 · 10쪽 자기저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기저항 \(R\)을 자로 길이, 투자율, 단면적으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R=\frac{l}{\mu S}\,[\mathrm{AT/Wb}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기저항 공식: \(R=\frac{l}{\mu S}\,[\mathrm{AT/Wb}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-138" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">77. 전기회로 · 10쪽 전기저항</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전기저항 \(R\)을 고유저항 또는 도전율로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(R=\rho\frac{l}{S}=\frac{l}{kS}\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전기저항 공식: \(R=\rho\frac{l}{S}=\frac{l}{kS}\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-139" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">78. 전기회로 · 10쪽 자속밀도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자속밀도 \(B\)를 자속과 단면적으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(B=\frac{\phi}{S}\,[\mathrm{Wb/m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자속밀도 공식: \(B=\frac{\phi}{S}\,[\mathrm{Wb/m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-140" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">79. 전기회로 · 10쪽 전류밀도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">전류밀도 \(J\)를 전류와 단면적으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(J=\frac{I}{S}\,[\mathrm{A/m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전류밀도 공식: \(J=\frac{I}{S}\,[\mathrm{A/m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-141" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">80. 전기회로 · 10쪽 자극 사이 힘</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자극 사이에 작용하는 자기력 \(F\)를 자극의 세기와 거리로 나타내는 쿨롱의 법칙은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=\frac{1}{4\pi\mu}\frac{m_1m_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자극 사이 힘 공식: \(F=\frac{1}{4\pi\mu}\frac{m_1m_2}{r^2}\,[\mathrm{N}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-142" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">81. 전기회로 · 10쪽 자기장</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기장 \(H\), 자하 \(m\), 힘 \(F\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=mH\,[\mathrm{N}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기장 공식: \(F=mH\,[\mathrm{N}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-143" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">82. 전기회로 · 10쪽 자속밀도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자속밀도 \(B\)와 자기장 \(H\), 투자율의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(B=\mu H=\mu_0\mu_sH\,[\mathrm{Wb/m^2}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자속밀도 공식: \(B=\mu H=\mu_0\mu_sH\,[\mathrm{Wb/m^2}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-144" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">83. 전기회로 · 10쪽 토크</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기모멘트가 자기장 속에서 받는 토크 \(T\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(T=MH\sin\theta\,[\mathrm{N\cdot m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 토크 공식: \(T=MH\sin\theta\,[\mathrm{N\cdot m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-145" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">84. 전기회로 · 10쪽 자기모멘트</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자기모멘트 \(M\)을 자극의 세기와 자극 간 거리로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(M=ml\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 자기모멘트 공식: \(M=ml\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-146" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">85. 전기회로 · 10쪽 전자력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자계 속 도체에 작용하는 전자력 \(F\)의 크기 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=BI l\sin\theta\,[\mathrm{N}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 전자력 공식: \(F=BI l\sin\theta\,[\mathrm{N}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-147" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">86. 전기회로 · 10쪽 비오-사바르</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">비오-사바르 법칙에서 미소 전류요소가 만드는 자기장 변화 \(\Delta H\)는 어떻게 나타내는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\Delta H=\frac{I\Delta l}{4\pi r^2}\sin\theta\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">10쪽 비오-사바르 공식: \(\Delta H=\frac{I\Delta l}{4\pi r^2}\sin\theta\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-148" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">87. 전기회로 · 11쪽 자기장 세기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">무한장 직선 도체 주위의 자기장 세기 \(H\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(H=\frac{I}{2\pi r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 자기장 세기 공식: \(H=\frac{I}{2\pi r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-149" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">88. 전기회로 · 11쪽 자기장 세기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">환상 솔레노이드의 자기장 세기 \(H\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(H=\frac{NI}{2\pi r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 자기장 세기 공식: \(H=\frac{NI}{2\pi r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-150" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">89. 전기회로 · 11쪽 자기장 세기</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">원형코일 중심의 자기장 세기 \(H\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(H=\frac{NI}{2r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 자기장 세기 공식: \(H=\frac{NI}{2r}\,[\mathrm{AT/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-151" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">90. 전기회로 · 11쪽 평행 도체</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">평행 도체 사이에 작용하는 힘 \(F\)를 두 전류와 거리로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(F=\frac{2I_1I_2}{r}\times10^{-7}\,[\mathrm{N/m}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 평행 도체 공식: \(F=\frac{2I_1I_2}{r}\times10^{-7}\,[\mathrm{N/m}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-152" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">91. 전기회로 · 11쪽 전자유도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">패러데이의 전자유도 법칙에서 유도기전력 \(e\)는 어떻게 나타내는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(e=-N\frac{\Delta\Phi}{\Delta t}\,[\mathrm{V}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 전자유도 공식: \(e=-N\frac{\Delta\Phi}{\Delta t}\,[\mathrm{V}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-153" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">92. 전기회로 · 11쪽 인덕턴스</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">자체 인덕턴스 \(L\)을 권수, 자속, 전류로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(L=\frac{N\Phi}{I}\,[\mathrm{H}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 인덕턴스 공식: \(L=\frac{N\Phi}{I}\,[\mathrm{H}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-154" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">93. 전기회로 · 11쪽 인덕턴스 합성</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">두 코일의 합성 인덕턴스 \(L\)는 가동접속과 차동접속에서 어떻게 나타나는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(L=L_1+L_2\pm2M\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 인덕턴스 합성 공식: \(L=L_1+L_2\pm2M\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-155" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">94. 전기회로 · 11쪽 결합계수</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">결합계수 \(k\)와 상호 인덕턴스 \(M\), 자기 인덕턴스 \(L_1,L_2\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(k=\frac{M}{\sqrt{L_1L_2}},\quad M=k\sqrt{L_1L_2}\,[\mathrm{H}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 결합계수 공식: \(k=\frac{M}{\sqrt{L_1L_2}},\quad M=k\sqrt{L_1L_2}\,[\mathrm{H}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-156" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">95. 전기회로 · 11쪽 결합계수</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">결합계수 \(k=1\)인 이상 결합에서 상호 인덕턴스 \(M\)은 어떻게 되는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(M=\sqrt{L_1L_2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 결합계수 공식: \(M=\sqrt{L_1L_2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-157" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">96. 전기회로 · 11쪽 코일 에너지</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">코일에 축적되는 에너지 \(W\)를 인덕턴스와 전류로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=\frac{1}{2}LI^2\,[\mathrm{J}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 코일 에너지 공식: \(W=\frac{1}{2}LI^2\,[\mathrm{J}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-158" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">97. 전기회로 · 11쪽 커패시터 에너지</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">커패시터에 축적되는 에너지 \(W\)를 전하, 전압, 정전용량으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(W=\frac{1}{2}QV=\frac{1}{2}CV^2\,[\mathrm{J}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 커패시터 에너지 공식: \(W=\frac{1}{2}QV=\frac{1}{2}CV^2\,[\mathrm{J}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-159" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">98. 전기회로 · 11쪽 각속도</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">교류에서 각속도 \(\omega\)와 주파수 \(f\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\omega=2\pi f\,[\mathrm{rad/sec}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 각속도 공식: \(\omega=2\pi f\,[\mathrm{rad/sec}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-160" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">99. 전기회로 · 11쪽 실효값</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">정현파 교류에서 실효값 \(V\)와 최댓값 \(V_m\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V=\frac{V_m}{\sqrt{2}}=0.707V_m,\quad V_m=\sqrt{2}V=1.414V\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 실효값 공식: \(V=\frac{V_m}{\sqrt{2}}=0.707V_m,\quad V_m=\sqrt{2}V=1.414V\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-161" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">100. 전기회로 · 11쪽 평균값</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">정현파 반주기의 평균값 \(V_a\)와 최댓값 \(V_m\)의 관계식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V_a=\frac{2}{\pi}V_m=0.637V_m\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 평균값 공식: \(V_a=\frac{2}{\pi}V_m=0.637V_m\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-162" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">101. 전기회로 · 11쪽 복소수</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">복소수 \(a+jb\)의 절댓값 \(Z\)는 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Z=\sqrt{a^2+b^2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 복소수 공식: \(Z=\sqrt{a^2+b^2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-163" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">102. 전기회로 · 11쪽 유도 리액턴스</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">유도 리액턴스 \(X_L\)를 각속도, 주파수, 인덕턴스로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(X_L=\omega L=2\pi fL\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 유도 리액턴스 공식: \(X_L=\omega L=2\pi fL\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-164" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">103. 전기회로 · 11쪽 용량 리액턴스</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">용량 리액턴스 \(X_C\)를 각속도, 주파수, 정전용량으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(X_C=\frac{1}{\omega C}=\frac{1}{2\pi fC}\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 용량 리액턴스 공식: \(X_C=\frac{1}{\omega C}=\frac{1}{2\pi fC}\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-165" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">104. 전기회로 · 11쪽 R 회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">저항만의 교류회로에서 임피던스와 전류 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Z=R,\quad I=\frac{V}{R}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 R 회로 공식: \(Z=R,\quad I=\frac{V}{R}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-166" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">105. 전기회로 · 11쪽 L 회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">인덕턴스만의 교류회로에서 전류 \(I\)를 전압과 유도 리액턴스로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(I=\frac{V}{\omega L}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 L 회로 공식: \(I=\frac{V}{\omega L}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-167" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">106. 전기회로 · 11쪽 C 회로</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">정전용량만의 교류회로에서 전류 \(I\)를 전압과 용량 리액턴스로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(I=\omega CV=\frac{V}{1/(\omega C)}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 C 회로 공식: \(I=\omega CV=\frac{V}{1/(\omega C)}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-168" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">107. 전기회로 · 11쪽 RLC 직렬</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">RLC 직렬회로의 합성 임피던스 \(Z\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Z=\sqrt{R^2+(X_L-X_C)^2}\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 RLC 직렬 공식: \(Z=\sqrt{R^2+(X_L-X_C)^2}\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-169" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">108. 전기회로 · 11쪽 공진</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">RLC 회로가 공진할 때 리액턴스 조건은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(X_L=X_C\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 공진 공식: \(X_L=X_C\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-170" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">109. 전기회로 · 11쪽 공진주파수</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">LC 회로의 공진주파수 \(f_0\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(f_0=\frac{1}{2\pi\sqrt{LC}}\,[\mathrm{Hz}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 공진주파수 공식: \(f_0=\frac{1}{2\pi\sqrt{LC}}\,[\mathrm{Hz}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-171" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">110. 전기회로 · 11쪽 피상전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">피상전력 \(P_a\)를 전압·전류 또는 유효전력·무효전력으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_a=VI\,[\mathrm{VA}],\quad P_a=\sqrt{P^2+P_r^2}\,[\mathrm{VA}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 피상전력 공식: \(P_a=VI\,[\mathrm{VA}],\quad P_a=\sqrt{P^2+P_r^2}\,[\mathrm{VA}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-172" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">111. 전기회로 · 11쪽 유효전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">교류회로에서 유효전력 \(P\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 유효전력 공식: \(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-173" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">112. 전기회로 · 11쪽 무효전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">교류회로에서 무효전력 \(P_r\) 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P_r=VI\sin\theta\,[\mathrm{Var}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 무효전력 공식: \(P_r=VI\sin\theta\,[\mathrm{Var}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-174" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">113. 전기회로 · 11쪽 역률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">역률을 유효전력, 피상전력, 전압, 전류, 위상각으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\text{역률}=\frac{P}{P_a}=\frac{VI\cos\theta}{VI}=\cos\theta\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 역률 공식: \(\text{역률}=\frac{P}{P_a}=\frac{VI\cos\theta}{VI}=\cos\theta\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-175" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">114. 전기회로 · 11쪽 RLC 역률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">RLC 직렬회로에서 역률 \(\cos\theta\)를 저항과 임피던스로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\cos\theta=\frac{R}{Z}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 RLC 역률 공식: \(\cos\theta=\frac{R}{Z}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-176" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">115. 전기회로 · 11쪽 Y-Δ 결선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">Y결선과 Δ결선의 등가 임피던스 변환식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(Z_\Delta=3Z_Y\,[\Omega]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 Y-Δ 결선 공식: \(Z_\Delta=3Z_Y\,[\Omega]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-177" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">116. 전기회로 · 11쪽 Y결선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">Y결선에서 선간전압과 선전류는 상전압, 상전류와 어떤 관계인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V_L=\sqrt{3}V_P,\quad I_L=I_P\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 Y결선 공식: \(V_L=\sqrt{3}V_P,\quad I_L=I_P\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-178" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">117. 전기회로 · 11쪽 Δ결선</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">Δ결선에서 선간전압과 선전류는 상전압, 상전류와 어떤 관계인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V_L=V_P,\quad I_L=\sqrt{3}I_P\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 Δ결선 공식: \(V_L=V_P,\quad I_L=\sqrt{3}I_P\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-179" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">118. 전기회로 · 11쪽 소비전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">단상 교류회로의 소비전력 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 소비전력 공식: \(P=VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-180" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">119. 전기회로 · 11쪽 소비전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">3상 교류회로의 소비전력 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=\sqrt{3}VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 소비전력 공식: \(P=\sqrt{3}VI\cos\theta\,[\mathrm{W}]\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-181" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">120. 전기회로 · 11쪽 3상 소비전력</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">3상에서 각상의 합성 소비전력은 어떻게 나타내는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=P_a+P_b+P_c\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 3상 소비전력 공식: \(P=P_a+P_b+P_c\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-182" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">121. 전기회로 · 11쪽 2전력계법</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">2전력계법에서 전체 소비전력 \(P\)는 어떻게 구하는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(P=P_1+P_2\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">11쪽 2전력계법 공식: \(P=P_1+P_2\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-183" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">122. 전기회로 · 12쪽 비사인파</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">비사인파 교류의 실효값을 직류분과 각 고조파 실효값으로 나타내는 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(V=\sqrt{V_0^2+V_1^2+V_2^2+\cdots+V_n^2}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">12쪽 비사인파 공식: \(V=\sqrt{V_0^2+V_1^2+V_2^2+\cdots+V_n^2}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-184" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">123. 전기회로 · 12쪽 왜형률</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">비사인파의 왜형률 \(\epsilon\)은 기본파 실효값과 전 고조파 실효값으로 어떻게 정의되는가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\epsilon=\frac{\text{전 고조파의 실효값}}{\text{기본파의 실효값}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">12쪽 왜형률 공식: \(\epsilon=\frac{\text{전 고조파의 실효값}}{\text{기본파의 실효값}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+
+      <article class="formula-card" data-id="summary-theory-185" data-category="전기회로">
+        <div class="card-top">
+          <label class="check-row">
+            <input type="checkbox" class="include-check" checked />
+            <span>암기모드에 추가</span>
+          </label>
+          <span class="meta">124. 전기회로 · 12쪽 파형률과 파고율</span>
+        </div>
+        <div class="field">
+          <span class="label">문제</span>
+          <div class="content">교류 파형의 파형률과 파고율 공식은 무엇인가?</div>
+        </div>
+        <div class="field">
+          <span class="label">정답 공식</span>
+          <div class="content formula">\(\text{파형률}=\frac{\text{실효값}}{\text{평균값}},\quad \text{파고율}=\frac{\text{최댓값}}{\text{실효값}}\)</div>
+        </div>
+        <div class="field">
+          <span class="label">해설</span>
+          <div class="content">12쪽 파형률과 파고율 공식: \(\text{파형률}=\frac{\text{실효값}}{\text{평균값}},\quad \text{파고율}=\frac{\text{최댓값}}{\text{실효값}}\)</div>
+        </div>
+        <label class="memo">
+          <span>잘못된 공식 / 수정 지시</span>
+          <textarea placeholder="예: 이 공식은 전압 기준을 V_L로 바꿔 주세요. 또는 공식 삭제"></textarea>
+        </label>
+      </article>
+  </main>
+  <script>
+    const cards = [...document.querySelectorAll(".formula-card")];
+    const selectedCount = document.getElementById("selectedCount");
+    const noteCount = document.getElementById("noteCount");
+    const storageKey = "formula-review-v1";
+
+    function readState() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function writeState() {
+      const state = {};
+      cards.forEach((card) => {
+        state[card.dataset.id] = {
+          include: card.querySelector(".include-check").checked,
+          note: card.querySelector("textarea").value
+        };
+      });
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function applySavedState() {
+      const state = readState();
+      cards.forEach((card) => {
+        const saved = state[card.dataset.id];
+        if (!saved) return;
+        card.querySelector(".include-check").checked = saved.include !== false;
+        card.querySelector("textarea").value = saved.note || "";
+      });
+    }
+
+    function refresh() {
+      let selected = 0;
+      let notes = 0;
+      cards.forEach((card) => {
+        const checked = card.querySelector(".include-check").checked;
+        const note = card.querySelector("textarea").value.trim();
+        card.classList.toggle("excluded", !checked);
+        card.classList.toggle("has-note", Boolean(note));
+        if (checked) selected += 1;
+        if (note) notes += 1;
+      });
+      selectedCount.textContent = selected;
+      noteCount.textContent = notes;
+      writeState();
+      if (window.MathJax?.typesetPromise) window.MathJax.typesetPromise();
+    }
+
+    function applyFilter() {
+      const category = document.getElementById("categoryFilter").value;
+      cards.forEach((card) => {
+        card.classList.toggle("hidden", category !== "all" && card.dataset.category !== category);
+      });
+    }
+
+    function showNotesOnly() {
+      cards.forEach((card) => {
+        const note = card.querySelector("textarea").value.trim();
+        card.classList.toggle("hidden", !note);
+      });
+    }
+
+    function downloadReview() {
+      const review = cards.map((card) => ({
+        id: card.dataset.id,
+        category: card.dataset.category,
+        include: card.querySelector(".include-check").checked,
+        correction: card.querySelector("textarea").value.trim()
+      }));
+      const blob = new Blob([JSON.stringify(review, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "formula-review-result.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    applySavedState();
+    refresh();
+    cards.forEach((card) => {
+      card.querySelector(".include-check").addEventListener("change", refresh);
+      card.querySelector("textarea").addEventListener("input", refresh);
+    });
+    document.getElementById("categoryFilter").addEventListener("change", applyFilter);
+    document.getElementById("selectAll").addEventListener("click", () => {
+      cards.forEach((card) => card.querySelector(".include-check").checked = true);
+      refresh();
+    });
+    document.getElementById("clearAll").addEventListener("click", () => {
+      cards.forEach((card) => card.querySelector(".include-check").checked = false);
+      refresh();
+    });
+    document.getElementById("showNotes").addEventListener("click", showNotesOnly);
+    document.getElementById("showAll").addEventListener("click", () => {
+      document.getElementById("categoryFilter").value = "all";
+      cards.forEach((card) => card.classList.remove("hidden"));
+    });
+    document.getElementById("downloadReview").addEventListener("click", downloadReview);
+  </script>
+</body>
+</html>

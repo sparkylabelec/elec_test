@@ -45,13 +45,15 @@ export function cleanMathText(value: string) {
 }
 
 export function hasLatex(value: string) {
-  return /\\\(|\\\[|\\frac|\\sqrt|\\cdot|\\times|\\Omega|\\theta|\\omega|\\phi|[_^{}]/.test(value);
+  return /\\\(|\\\[|\\frac|\\sqrt|\\cdot|\\times|\\Omega|\\theta|\\omega|\\phi|[_^{}]|\$[^$\n]+\$/.test(value);
 }
 
 export function displayMathText(value: string) {
   if (hasLatex(value)) {
     return value
       .replace(/\\\\/g, "\\")
+      .replace(/\$\$([\s\S]*?)\$\$/g, "\\[$1\\]")
+      .replace(/\$([^$\n]+?)\$/g, "\\($1\\)")
       .replace(/[ \t]+\n/g, "\n")
       .replace(/\n{3,}/g, "\n\n")
       .trim();
@@ -60,10 +62,12 @@ export function displayMathText(value: string) {
   return cleanMathText(value);
 }
 
+function normalizeCardText(value: string) {
+  return hasLatex(value) ? displayMathText(value) : cleanMathText(value);
+}
+
 export function parseCard(question: QuizQuestion): ParsedCard {
-  const normalized = cleanMathText(
-    question.question.replace(/[❶➊]/g, "①").replace(/[❷➋]/g, "②").replace(/[❸➌]/g, "③").replace(/[❹➍]/g, "④"),
-  );
+  const normalized = normalizeCardText(question.question);
   const matches = Array.from(normalized.matchAll(choicePattern));
   const answerLabel = answerToLabel[question.answer] ?? question.answer;
 
@@ -80,7 +84,7 @@ export function parseCard(question: QuizQuestion): ParsedCard {
   const choices = matches.map((match) => ({
     label: match[1],
     originalLabel: match[1],
-    text: cleanMathText(match[2].trim()),
+    text: normalizeCardText(match[2].trim()),
     isCorrect: match[1] === answerLabel,
   }));
   const shuffled = shuffle(choices).map((choice, index) => ({
